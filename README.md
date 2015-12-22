@@ -1,2 +1,3 @@
-# Voting App
+# Nightlife App
 
+Using the yelp API
