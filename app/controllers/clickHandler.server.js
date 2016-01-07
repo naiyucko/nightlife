@@ -1,6 +1,13 @@
 'use strict';
 
 function clickHandler (db) {
+   var Yelparunga = require('yelp');
+   var yelp = new Yelparunga({
+     consumer_key: 'WXtr_coXGKiiOmKa5xBaAg',
+     consumer_secret: 'smizqL8j6hfkzUYwR-uomFzXnqA',
+     token: 'bg5qMoUuYGuCkVyxlZOrm3hyGQpO5WMS',
+     token_secret: 'eAOrzGiVCojE_stBogBZo3xKdiE',
+   });
    var clicks = db.collection('clicks');
 	var usernames = db.collection('usernames');
 	var polls = db.collection('polls');
@@ -16,7 +23,7 @@ function clickHandler (db) {
          if (result) {
             res.json(result);
          } else {
-            
+            res.json({'Error' : 'unlogged'});
          }
       });
    };
@@ -24,8 +31,9 @@ function clickHandler (db) {
    this.getPolls = function (req, res) {
 
       var clickProjection = { '_id': false };
-
-      polls.find({'user': req.cookies.username}, clickProjection, function (err, result) {
+      if (req.query.reallife == 'true')
+      {
+         polls.find({'title': req.query.barnum, 'user': req.cookies.username}, clickProjection, function (err, result) {
          if (err) {
             throw err;
          }
@@ -42,6 +50,26 @@ function clickHandler (db) {
             
          }
       });
+      }
+      else {
+      polls.find({'title': req.query.barnum}, clickProjection, function (err, result) {
+         if (err) {
+            throw err;
+         }
+
+         if (result) {
+         	result.toArray(function (err, result) {
+         		if (err) {
+            		throw err;
+         		}
+         		res.json(result);
+         	})
+            
+         } else {
+            
+         }
+      });
+      }
    };
 
    this.pollVote = function (req, res) {
@@ -81,24 +109,13 @@ function clickHandler (db) {
 	};
 	
 	this.createPoll = function (req, res, next) {
-		var rtitle = decodeURI(req.body.title).toString();
-		if (rtitle.endsWith('?')) {
-			rtitle = rtitle.substring(0, rtitle.length - 1);
-			console.log(rtitle);
-		}
+		var rtitle = req.query.barid;
 		var tempob = {'user' : req.cookies.username, 'title' : rtitle};
-		for (var v = 1; v < Object.keys(req.body).length - 1; v++)
-		{
-			
-			var tempagain = "name" + v.toString();
-			var tempstring = req.body[tempagain];
-			tempob[tempstring] = 0;
-		}
 		polls.insert(tempob, function (err) {
                if (err) {
                   throw err;
                }
-               var urlgo = "/poll/" + req.cookies.username.toString() + "/" + rtitle;
+               var urlgo = "/";
                res.redirect(urlgo);
             });
 	}
@@ -174,11 +191,8 @@ function clickHandler (db) {
 	}
 	
 	this.deletePoll = function (req, res, next) {
-		var rname = decodeURI(req.params.name).toString();
-		var rtitle = decodeURI(req.params.ptitle).toString();
-		if (req.params.ptitle.endsWith('?') && !rtitle.endsWith('?')) {
-			rtitle += "?";
-		}
+		var rname = req.cookies.username;
+		var rtitle = req.query.barnum;
 		polls.remove({'user': rname, 'title' : rtitle}, function (err, result) {
 			if (err) {
             throw err;
@@ -186,6 +200,20 @@ function clickHandler (db) {
          res.redirect('/');
 		});
 	}
+	
+	this.yelpMe = function (req, res, next) {
+	         var cityof = req.query.query123;
+         	   yelp.search({ term: 'bar', location: cityof, category_filter: 'bars' }, function(err, data) {
+                 if (err) {
+                     throw err;
+                  }
+                 res.json(data);
+               });
+	         
+	      
+	   
+	}
+
 }
 
 module.exports = clickHandler;

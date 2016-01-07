@@ -207,3 +207,43 @@ span {
 	display: inline;
 	margin: 0;
 }
+
+#wrap {
+  margin: 50px 0px;
+  position: absolute;
+  float: right;
+}
+
+#wellthen
+{
+  position: relative;
+  left: 0px;
+  top: 100px;
+}
+.ahueahue
+{
+  background-color: rgba(145, 25, 210, 0.5);
+  margin-left: 400px;
+  margin-right: 400px;
+  margin-bottom: 20px;
+  border-radius: 25px;
+  padding-left: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.ahueahue:hover { 
+    background-color: rgba(100, 100, 210, 0.4);
+}
+a {
+    text-decoration: none;
+    color: black;
+}
+a:hover, a:visited, a:link, a:active
+{
+    text-decoration: none;
+  color: black;
+}
+
+.groupbtn {
+	background-color: rgba(200, 75, 210, 0.7);
+}

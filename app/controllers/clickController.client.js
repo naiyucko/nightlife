@@ -1,13 +1,25 @@
 'use strict';
+function ajaxRequest (method, url, callback) {
+      var xmlhttp = new XMLHttpRequest();
 
+      xmlhttp.onreadystatechange = function () {
+         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            callback(xmlhttp.response);
+         }
+      };
+
+      xmlhttp.open(method, url, true);
+      xmlhttp.send();
+   }
 (function () {
    var addButton = document.querySelector('.btn-add');
    var deleteButton = document.querySelector('.btn-delete');
    var clickNbr = document.querySelector('#click-nbr');
    var namesection = document.querySelector('#display-name');
    var pollsection = document.querySelector('#newpoll');
-   var apiUrl = 'https://votingapp-naiyucko.c9users.io/api/clicks';
-   var apiUrlPolls = 'https://votingapp-naiyucko.c9users.io/api/polls';
+   var apiUrl = 'https://nightlifeapp-naiyucko.c9users.io/api/clicks';
+   var apiUrlPolls = 'https://nightlifeapp-naiyucko.c9users.io/yelping?query123=';
+   var isloggedinbool = false;
    
    function ready (fn) {
       if (typeof fn !== 'function') {
@@ -21,22 +33,18 @@
       document.addEventListener('DOMContentLoaded', fn, false);
    }
    
-   function ajaxRequest (method, url, callback) {
-      var xmlhttp = new XMLHttpRequest();
-
-      xmlhttp.onreadystatechange = function () {
-         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            callback(xmlhttp.response);
-         }
-      };
-
-      xmlhttp.open(method, url, true);
-      xmlhttp.send();
-   }
+   
    
     function updateClickCount (data) {
       var clicksObject = JSON.parse(data);
-      namesection.innerHTML = clicksObject.username;
+      if (clicksObject.username !== undefined) {
+         isloggedinbool = true;
+         namesection.innerHTML = "Welcome, " + clicksObject.username + "!" + '<br /><a class="menu" href="/logout">Logout</a>';
+      }
+      else {
+         isloggedinbool = false;
+         namesection.innerHTML = "Login to tell everyone where you're going tonight!" + '<br /><a class="menu" href="/login">Login</a><a class="menu" href="/signup">Signup</a>';
+      }
    }
    
    function updateNewPoll () {
@@ -56,29 +64,35 @@
       });
    }
    
-   addButton.addEventListener('click', function () {
-      updateNewPoll();
-
-   }, false);
-   
-   deleteButton.addEventListener('click', function () {
-      ajaxRequest('GET', apiUrlPolls, function (data) {
-         var html = "";
-         var jdata = JSON.parse(data);
-         if (jdata.length === 0)
-         {
-            html += "You haven't created any polls yet!";
-         }
-         for (var v = 0; v < jdata.length; v++)
-         {
-            html += '<br /><br /><a class = "menu" href="/poll/' + jdata[v].user + '/' + jdata[v].title + '/view"><b>' + jdata[v].title + '</b></a>' + '<div class="remove-btn"><a href="/poll/' + jdata[v].user + '/' + jdata[v].title + '/delete"><button class="btn btn-remove">Delete</button></div>';
-         }
-         pollsection.innerHTML = html;
+   $('#tfbutton').click(function() {
+      var tbshot = $('#tbss').val();
+      ajaxRequest('GET', apiUrlPolls + tbshot, function(data) {
+         var parsed = JSON.parse(data);
+         var htmlss = "";
+         var wtfmate = [];
+         var pbdmf = parsed.businesses.slice(0);
+        for (var v = 0; v < pbdmf.length; v++)
+          {
+             
+            htmlss = htmlss.concat("<div class=\"row text-center\"> <div class=\"col-md-12 text-center\"> <div class=\"ahueahue text-center\"><span style=\"color:black;font-size:20px\">");
+            htmlss = htmlss.concat("<a href=\"" + pbdmf[v].url + "\">" + pbdmf[v].name + "</a></span><br><img src=\"" + pbdmf[v].image_url + "\"<br><span style\"font-size:10px\">" + pbdmf[v].snippet_text);
+            if (isloggedinbool) {
+               htmlss = htmlss.concat("<br><button type=\"button\" id=\"" +pbdmf[v].id + "\" class=\"btn groupbtn\" onclick=\"isgoing('" + pbdmf[v].id + "')\">Click Me!</button>");
+            }
+            htmlss = htmlss.concat("</span></div></div></div>");
+             
+          }
+          $('#wowthere').html(htmlss);
+          for (var i = 0; i <pbdmf.length; i++) {
+             checkgoing(pbdmf[i].id);
+          }
       });
-
-   }, false);
+      
+   });
    
    ready(ajaxRequest('GET', apiUrl, updateClickCount));
+   
+   
 })();
 
 function topLel(textf) {
@@ -92,3 +106,33 @@ function topLel(textf) {
       $('#wowthere').html("");
    }
 }
+
+function isgoing(value) {
+   if ($('#' + value).html() == "You're Going") {
+      ajaxRequest('GET', 'https://nightlifeapp-naiyucko.c9users.io/api/delete?barnum=' + value, function(data1) {
+         checkgoing(value);
+      })
+   }
+   else {
+   ajaxRequest('GET', 'https://nightlifeapp-naiyucko.c9users.io/newpoll?barid=' + value, function(data) {
+      checkgoing(value);
+   })
+   }
+}
+
+function checkgoing(value) {
+   ajaxRequest('GET', 'https://nightlifeapp-naiyucko.c9users.io/api/polls?reallife=true&barnum=' + value, function(resulter) {
+   var ahue = JSON.parse(resulter);   
+   if (ahue.length !== 0) {
+      $('#' + value).html("You're Going");
+   }
+   else {
+   ajaxRequest('GET', 'https://nightlifeapp-naiyucko.c9users.io/api/polls?barnum=' + value, function(data2) { 
+         var stuff = JSON.parse(data2);
+         $('#' + value).html(stuff.length + " Going");
+      });
+   }
+   })
+   
+}
+

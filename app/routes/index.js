@@ -11,7 +11,7 @@ module.exports = function (app, db) {
     var clickHandler = new ClickHandler(db);
 
     app.route('/')
-        .get(clickHandler.isLogged, function (req, res) {
+        .get(function (req, res) {
             res.sendFile(process.cwd() + '/public/index.html');
         });
 
@@ -41,7 +41,7 @@ module.exports = function (app, db) {
         });
         
     app.route('/newpoll')
-    	.post(clickHandler.createPoll, function (req, res) {
+    	.get(clickHandler.isLogged, clickHandler.createPoll, function (req, res) {
         	//res.redirect('/poll/');
         });
     	
@@ -63,7 +63,10 @@ module.exports = function (app, db) {
         })
         .post(clickHandler.viewPoll);
         
-    app.route('/poll/:name/:ptitle/delete')
+    app.route('/api/delete')
     	.get (clickHandler.deletePoll);
+    	
+    app.route('/yelping')
+        .get(clickHandler.yelpMe);
     	
 };

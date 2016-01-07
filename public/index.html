@@ -3,34 +3,30 @@
 <html>
 
 	<head>
-		<title>Voting App</title>
+		<title>Nightlife App</title>
 		
 		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 	</head>
 
 	<header>
-		<p>Welcome, <span id="display-name"></span>!</p>
-		<a class="menu" href="/logout">Logout</a>
+		<p><span id="display-name"></span></p>
+		
 	</header>
 
 	<body>
-		<div class="container">
-			<img src="/public/img/voting_icon.png" height="150" width="150"/>
-			<br />
-			<p class="clementine-text">Voting App</p>
-		</div>
-	
-		<div class="container">
-			<p>What would you like to do today?<span id="click-nbr"></span></p>
-			<br />
-			<div class="btn-container">
-				<button type="submit" class="btn btn-add">New Poll</button>
-				<button class="btn btn-delete">My Polls</button>
-			</div>
-		</div>
-		<center><br /><div class="container text-center" id="newpoll">
-			
-		</div></center>
+		<center>
+		<div id="tfheader">
+		<input type="text" placeholder="Enter Your City" class="tftextinput" name="query" size="21" maxlength="120" id="tbss"><input type="submit" value="search" id="tfbutton">
+		<div class="container-fluid" id="wrapp">
+		  <div class="row">
+		    <div class="col-md-12 text-center" id="wrap">
+				<div class="tfclear text-center" id="wowthere"></div>
+				</div>
+				</div>
+				</div>
+	</div>
+	</center>
 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 		<script type="text/javascript" src="controllers/clickController.client.js"></script>
