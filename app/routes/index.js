@@ -44,24 +44,9 @@ module.exports = function (app, db) {
     	.get(clickHandler.isLogged, clickHandler.createPoll, function (req, res) {
         	//res.redirect('/poll/');
         });
-    	
-    app.route('/poll/:name/:ptitle')
-    	.get(function (req, res) {
-            res.sendFile(process.cwd() + '/public/poll.html');
-        })
-    	.post(clickHandler.displayPoll);
         
     app.route('/api/polls')
         .get(clickHandler.getPolls);
-        
-    app.route('/poll/:name/:ptitle/postpoll')
-    	.post(clickHandler.pollVote);
-    	
-  	app.route('/poll/:name/:ptitle/view')
-  		.get(clickHandler.isLogged, function (req, res) {
-            res.sendFile(process.cwd() + '/public/view.html');
-        })
-        .post(clickHandler.viewPoll);
         
     app.route('/api/delete')
     	.get (clickHandler.deletePoll);
